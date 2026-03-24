@@ -1,25 +1,39 @@
 # env-test-guard
 
-RAII guard for environment variables in parallel Rust tests.
+Test toolkit for Rust projects that interact with Git.
 
-When running `cargo test`, tests execute in parallel by default. Since environment
-variables are process-global, concurrent `set_var`/`remove_var` calls can cause
-flaky tests. `EnvGuard` captures variable state on creation and restores it on drop.
+Provides temporary repository scaffolding, environment variable guards, commit/branch fixture builders, and Git capability detection for consistent CI and local test runs.
+
+## Features
+
+- **`GitRepo`** — Isolated temporary Git repositories with deterministic config. Automatically cleaned up on drop.
+- **`EnvGuard`** — RAII guard that saves/restores environment variables for safe parallel test execution.
+- **`GitEnv`** — Detects Git version, capabilities (worktrees, sparse checkout), and CI provider.
 
 ## Usage
 
 ```rust
-use env_test_guard::EnvGuard;
+use env_test_guard::{EnvGuard, GitRepo, GitEnv};
 
 #[test]
-fn test_with_custom_env() {
-    let _guard = EnvGuard::new(&["DATABASE_URL", "LOG_LEVEL"]);
+fn test_branch_operations() {
+    let env = GitEnv::detect();
+    assert!(env.supports_worktrees());
 
-    std::env::set_var("DATABASE_URL", "postgres://test:test@localhost/test_db");
-    std::env::set_var("LOG_LEVEL", "debug");
+    let mut repo = GitRepo::new().unwrap();
+    repo.commit("add feature", &["src/lib.rs"], "pub fn hello() {}");
+    repo.checkout_new_branch("feature-x");
+    repo.commit("feature work", &["src/lib.rs"], "pub fn hello() { todo!() }");
 
-    // ... your test logic ...
-    // Original values are restored when _guard drops
+    assert_eq!(repo.current_branch(), "feature-x");
+    assert!(!repo.is_dirty());
+}
+
+#[test]
+fn test_with_env_isolation() {
+    let _guard = EnvGuard::new(&["GIT_DIR", "GIT_WORK_TREE"]);
+    std::env::set_var("GIT_DIR", "/tmp/fake");
+    // GIT_DIR is restored when _guard drops
 }
 ```
 

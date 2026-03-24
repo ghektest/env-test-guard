@@ -1,9 +1,12 @@
 [package]
 name = "env-test-guard"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
-description = "RAII guard for environment variables in parallel Rust tests"
+description = "Test toolkit for Rust projects that interact with Git — temporary repos, environment guards, fixture builders, and git capability detection"
 license = "MIT"
 repository = "https://github.com/ghektest/env-test-guard"
-keywords = ["testing", "environment", "guard", "parallel"]
+keywords = ["testing", "git", "fixtures", "environment", "ci"]
 categories = ["development-tools::testing"]
+
+[dependencies]
+tempfile = "3"
