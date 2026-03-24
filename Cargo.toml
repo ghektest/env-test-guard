@@ -1,0 +1,9 @@
+[package]
+name = "env-test-guard"
+version = "0.1.0"
+edition = "2021"
+description = "RAII guard for environment variables in parallel Rust tests"
+license = "MIT"
+repository = "https://github.com/ghektest/env-test-guard"
+keywords = ["testing", "environment", "guard", "parallel"]
+categories = ["development-tools::testing"]
