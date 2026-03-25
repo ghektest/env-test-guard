@@ -1,6 +1,6 @@
 [package]
 name = "env-test-guard"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 description = "Test toolkit for Rust projects that interact with Git — temporary repos, environment guards, fixture builders, and git capability detection"
 license = "MIT"
